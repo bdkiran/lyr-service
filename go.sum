@@ -1,0 +1,7 @@
+github.com/elastic/go-elasticsearch v0.0.0 h1:Pd5fqOuBxKxv83b0+xOAJDAkziWYwFinWnBO0y+TZaA=
+github.com/elastic/go-elasticsearch/v7 v7.7.0 h1:oQBx/S3RiaH0/kiP0scYSay9xgSmVAYJpuqEf+e9GZg=
+github.com/elastic/go-elasticsearch/v7 v7.7.0/go.mod h1:OJ4wdbtDNk5g503kvlHLyErCgQwwzmDtaFC4XyOxXA4=
+github.com/elastic/go-elasticsearch/v8 v8.0.0-20200521065016-b05f73fe0dcf h1:k228xv2aLpyy5qtjI6nE6akAfZnaUm5GimSEqUKkLDU=
+github.com/elastic/go-elasticsearch/v8 v8.0.0-20200521065016-b05f73fe0dcf/go.mod h1:xe9a/L2aeOgFKKgrO3ibQTnMdpAeL0GC+5/HpGScSa4=
+github.com/gorilla/mux v1.7.4 h1:VuZ8uybHlWmqV03+zRzdwKL4tUnIp1MAQtp1mIFE1bc=
+github.com/gorilla/mux v1.7.4/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
