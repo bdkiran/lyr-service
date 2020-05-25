@@ -17,9 +17,9 @@ func main() {
 }
 
 func handleRoutes() {
-	router := api.InitilizeRouter()
+	corsHandler := api.InitilizeRouter()
 	srv := &http.Server{
-		Handler:      router,
+		Handler:      corsHandler,
 		Addr:         ":8080",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,

@@ -8,15 +8,16 @@ import (
 )
 
 //search indexed documents
-func searchIndexedDocument(keywordToSearch string, fieldToSearch string) []Lyric {
+func multiMatchSearchIndexedDocument(keywordToSearch string) []Lyric {
 	var r map[string]interface{}
 
 	// Build the request body.
 	var buf bytes.Buffer
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
-			"match": map[string]interface{}{
-				fieldToSearch: keywordToSearch,
+			"multi_match": map[string]interface{}{
+				"query":  keywordToSearch,
+				"fields": []string{"artist", "title", "lyric"},
 			},
 		},
 	}

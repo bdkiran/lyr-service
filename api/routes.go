@@ -9,30 +9,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type lyricLine struct {
-	Artist     string `json:"artist"`
-	Title      string `json:"title"`
-	Lyric      string `json:"lyric"`
-	LineNumber int    `json:"lineNumber"`
-}
-
-var lyricLines []lyricLine
-
-func init() {
-	lyricLines = []lyricLine{
-		{
-			Artist: "Drake",
-			Title:  "Toosie Slide",
-			Lyric:  "We gon slide",
-		},
-		{
-			Artist: "Drake",
-			Title:  "Toosie Slide",
-			Lyric:  "I can dance like michel jackson",
-		},
-	}
-}
-
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Home function called")
 	const returnString = "Alive"
@@ -61,6 +37,19 @@ func singleSongHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(song)
 
 	data := elasticpersist.GetLyricstBySongName(song)
+
+	response, _ := json.MarshalIndent(data, "", "    ")
+	w.Header().Set("Content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+}
+
+func songArtistHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	term, _ := vars["term"]
+	log.Println(term)
+
+	data := elasticpersist.GetLyricsByTerm(term)
 
 	response, _ := json.MarshalIndent(data, "", "    ")
 	w.Header().Set("Content-type", "application/json")

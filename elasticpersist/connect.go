@@ -15,8 +15,7 @@ var es *elasticsearch.Client
 func ConnectToEs() {
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			//Connections address goes here
-			"",
+			"http://localhost:9200",
 		},
 	}
 	var err error
@@ -24,17 +23,8 @@ func ConnectToEs() {
 	if err != nil {
 		log.Fatalf("Error creating the client: %s", err)
 	}
-}
-
-//Lyric is the structure that represnts data store in elasticsearch
-type Lyric struct {
-	Artist     string `json:"artist"`
-	Title      string `json:"title"`
-	Lyric      string `json:"lyric"`
-	LineNumber int    `json:"lineNumber"`
-}
-
-func getElasticSearchInfo() {
+	//Get information about es cluster
+	//when this is removed, i/o timout occurs
 	res, err := es.Info()
 	if err != nil {
 		log.Fatalf("Error getting response: %s", err)
@@ -44,6 +34,14 @@ func getElasticSearchInfo() {
 	log.Println(res)
 
 	io.Copy(ioutil.Discard, res.Body)
+}
+
+//Lyric is the structure that represnts data store in elasticsearch
+type Lyric struct {
+	Artist     string `json:"artist"`
+	Title      string `json:"title"`
+	Lyric      string `json:"lyric"`
+	LineNumber int    `json:"lineNumber"`
 }
 
 //GetByID gets a a document by id
@@ -67,4 +65,9 @@ func GetLyricstBySongName(title string) []Lyric {
 //GetLyricstByArtistName gets documents by an artist
 func GetLyricstByArtistName(artist string) []Lyric {
 	return searchIndexedDocument(artist, "artist")
+}
+
+//GetLyricsByTerm gets documents matchine a term
+func GetLyricsByTerm(term string) []Lyric {
+	return multiMatchSearchIndexedDocument(term)
 }
