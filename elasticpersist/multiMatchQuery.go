@@ -22,7 +22,7 @@ func multiMatchSearchIndexedDocument(keywordToSearch string) []Lyric {
 		},
 	}
 	if err := json.NewEncoder(&buf).Encode(query); err != nil {
-		log.Fatalf("Error encoding query: %s", err)
+		logger.Warning.Printf("Error encoding query: %s", err)
 	}
 
 	// Perform the search request.
@@ -34,7 +34,7 @@ func multiMatchSearchIndexedDocument(keywordToSearch string) []Lyric {
 		es.Search.WithPretty(),
 	)
 	if err != nil {
-		log.Fatalf("Error getting response: %s", err)
+		logger.Warning.Printf("Error getting response: %s", err)
 	}
 	defer res.Body.Close()
 
@@ -44,7 +44,7 @@ func multiMatchSearchIndexedDocument(keywordToSearch string) []Lyric {
 			log.Fatalf("Error parsing the response body: %s", err)
 		} else {
 			// Print the response status and error information.
-			log.Fatalf("[%s] %s: %s",
+			logger.Warning.Printf("[%s] %s: %s",
 				res.Status(),
 				e["error"].(map[string]interface{})["type"],
 				e["error"].(map[string]interface{})["reason"],
@@ -53,11 +53,11 @@ func multiMatchSearchIndexedDocument(keywordToSearch string) []Lyric {
 	}
 
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-		log.Fatalf("Error parsing the response body: %s", err)
+		logger.Warning.Printf("Error parsing the response body: %s", err)
 	}
 
 	// Print the response status, number of results, and request duration.
-	log.Printf(
+	logger.Info.Printf(
 		"[%s] %d hits; took: %dms",
 		res.Status(),
 		int(r["hits"].(map[string]interface{})["total"].(map[string]interface{})["value"].(float64)),
@@ -71,12 +71,12 @@ func multiMatchSearchIndexedDocument(keywordToSearch string) []Lyric {
 		var songLyric Lyric
 		data, err := json.Marshal(hit.(map[string]interface{})["_source"])
 		if err != nil {
-			log.Println(err)
+			logger.Warning.Println(err)
 		}
 
 		err = json.Unmarshal(data, &songLyric)
 		if err != nil {
-			log.Println(err)
+			logger.Warning.Println(err)
 		}
 		returnData = append(returnData, songLyric)
 		// log.Printf(" ID=%s", hit.(map[string]interface{})["_id"])

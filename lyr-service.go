@@ -1,19 +1,24 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/bdkiran/lyr-service/api"
 	"github.com/bdkiran/lyr-service/elasticpersist"
+	"github.com/bdkiran/lyr-service/utils"
 )
 
-func main() {
-	elasticpersist.ConnectToEs()
-	log.Println("Starting the server...")
-	handleRoutes()
+//Initilize variable to access project logger,
+//this initialization can be used accoss the whole package
+var logger = utils.NewLogger()
 
+func main() {
+	logger.Info.Println("Starting the server...")
+	//Set up connection to elasticearch
+	elasticpersist.ConnectToEs()
+	//Set up Http listener.
+	handleRoutes()
 }
 
 func handleRoutes() {
@@ -24,5 +29,5 @@ func handleRoutes() {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	log.Fatal(srv.ListenAndServe())
+	logger.Error.Fatal(srv.ListenAndServe())
 }
