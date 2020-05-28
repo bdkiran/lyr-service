@@ -7,13 +7,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//InitilizeRouter returns a new routher with all initilized routes
+//InitilizeRouter returns a new http Handler with all initilized routes, also providing cors access
 func InitilizeRouter() http.Handler {
 	router := mux.NewRouter()
 	router.HandleFunc("/", healthHandler).Methods("GET")
-	router.HandleFunc("/artist/{artistName}", singleArtistHandler).Methods("GET")
-	router.HandleFunc("/song/{songName}", singleSongHandler).Methods("GET")
-	router.HandleFunc("/search/{term}", songArtistHandler).Methods("GET")
+	router.HandleFunc("/search/{term}", searchHandler).Methods("GET")
 
 	corsObj := handlers.AllowedOrigins([]string{"*"})
 

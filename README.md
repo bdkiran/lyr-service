@@ -1,6 +1,6 @@
 # lyr-service
 
-lyr-service is a go rest api that wraps an elasticsearch database
+lyr-service is a go rest api that wraps an elasticsearch database.
 
 ## Usage
 

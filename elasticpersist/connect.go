@@ -5,8 +5,14 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/bdkiran/lyr-service/utils"
+
 	elasticsearch "github.com/elastic/go-elasticsearch/v7"
 )
+
+//Initilize variable to access project logger,
+//this initialization can be used accoss the whole package
+var logger = utils.NewLogger()
 
 //ES client to be used acrross the client
 var es *elasticsearch.Client
@@ -21,17 +27,17 @@ func ConnectToEs() {
 	var err error
 	es, err = elasticsearch.NewClient(cfg)
 	if err != nil {
-		log.Fatalf("Error creating the client: %s", err)
+		logger.Error.Fatalf("Error creating the client: %s", err)
 	}
 	//Get information about es cluster
 	//when this is removed, i/o timout occurs
 	res, err := es.Info()
 	if err != nil {
-		log.Fatalf("Error getting response: %s", err)
+		logger.Error.Fatalf("Error getting response: %s", err)
 	}
 
 	defer res.Body.Close()
-	log.Println(res)
+	logger.Info.Print(res)
 
 	io.Copy(ioutil.Discard, res.Body)
 }
@@ -44,27 +50,17 @@ type Lyric struct {
 	LineNumber int    `json:"lineNumber"`
 }
 
-//GetByID gets a a document by id
+//GetByID gets a a document by id. Not sure if this will be used.
 func GetByID(id string) {
 	res, err := es.Get("song_lyrics", id)
 	if err != nil {
-		log.Printf("Error getting response: %s", err)
+		logger.Warning.Printf("Error getting response: %s", err)
 	}
 
 	defer res.Body.Close()
 	log.Println(res)
 
 	io.Copy(ioutil.Discard, res.Body)
-}
-
-//GetLyricstBySongName gets documents by a songname
-func GetLyricstBySongName(title string) []Lyric {
-	return searchIndexedDocument(title, "title")
-}
-
-//GetLyricstByArtistName gets documents by an artist
-func GetLyricstByArtistName(artist string) []Lyric {
-	return searchIndexedDocument(artist, "artist")
 }
 
 //GetLyricsByTerm gets documents matchine a term
