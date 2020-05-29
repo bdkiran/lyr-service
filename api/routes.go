@@ -21,7 +21,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	term, _ := vars["term"]
 
-	logger.Info.Printf("Searching for %s", term)
+	logger.Info.Printf("Searching for: %s", term)
 	data, err := elasticpersist.GetLyricsByTerm(term)
 	if err != nil {
 		sendResponse("An Error occured", "An occured when finding that term", 404, w)

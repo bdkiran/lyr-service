@@ -19,9 +19,15 @@ var es *elasticsearch.Client
 
 //ConnectToEs creats a connection to elasticsearch
 func ConnectToEs() {
+	connectionURL, connectErr := utils.GetEnvVariableString("ES_CONNECTION_STRING")
+	if connectErr != nil {
+		logger.Error.Fatal(connectErr)
+	}
+
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			"http://localhost:9200",
+			connectionURL,
+			//"http://localhost:9200",
 		},
 	}
 	var err error
@@ -30,17 +36,7 @@ func ConnectToEs() {
 		logger.Error.Fatalf("Exiting due to error creating the client connection: %s", err)
 	}
 
-	//Get information about es cluster
-	//when this is removed, i/o timout occurs
-	res, err := es.Info()
-	if err != nil {
-		logger.Error.Fatalf("Exiting due to error getting response from Elasticsearch cluster: %s", err)
-	}
-
-	defer res.Body.Close()
-	logger.Info.Print(res)
-
-	io.Copy(ioutil.Discard, res.Body)
+	logger.Info.Println("ES connection successful")
 }
 
 //Lyric is the structure that represnts data store in elasticsearch
@@ -49,6 +45,21 @@ type Lyric struct {
 	Title      string `json:"title"`
 	Lyric      string `json:"lyric"`
 	LineNumber int    `json:"lineNumber"`
+}
+
+func checkElasticSearchDetails() {
+	//Get information about es cluster
+	//when this is removed, i/o timout occurs
+	res, err := es.Info()
+	if err != nil {
+		logger.Error.Fatalf("Exiting due to error getting response from Elasticsearch cluster: %s", err)
+	}
+
+	defer res.Body.Close()
+
+	logger.Info.Print(res)
+
+	io.Copy(ioutil.Discard, res.Body)
 }
 
 //getByID gets a a document by id. Not sure if this will be used.
