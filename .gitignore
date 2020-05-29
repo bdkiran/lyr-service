@@ -1,2 +1,4 @@
 #Dont need loging uploaded to git.
 app.log
+#Remove environment variables from upload
+.env
