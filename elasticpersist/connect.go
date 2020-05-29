@@ -21,9 +21,7 @@ var es *elasticsearch.Client
 func ConnectToEs() {
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			//"http://192.168.86.86:9200",
-			"http://10.34.1.42:9200",
-			//"http://localhost:9200",
+			"http://localhost:9200",
 		},
 	}
 	var err error
