@@ -12,24 +12,42 @@ import (
 //Initilize variable to access project logger
 var logger = utils.NewLogger()
 
+//Health handler function, should add more logic to actually provide a "Health" update
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	logger.Info.Println("Home function called")
-	const returnString = "Alive"
-	response, _ := json.Marshal(returnString)
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(response)
+	sendResponse("The server is alive", "No Errors detected.", http.StatusOK, w)
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	term, _ := vars["term"]
-	logger.Info.Printf("Searching for %s", term)
 
-	data := elasticpersist.GetLyricsByTerm(term)
+	logger.Info.Printf("Searching for %s", term)
+	data, err := elasticpersist.GetLyricsByTerm(term)
+	if err != nil {
+		sendResponse("An Error occured", "An occured when finding that term", 404, w)
+	}
 
 	response, _ := json.MarshalIndent(data, "", "    ")
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(response)
+}
+
+type apiResponse struct {
+	Message     string `json:"message"`
+	Description string `json:"description"`
+}
+
+func sendResponse(message string, description string, statusCode int, w http.ResponseWriter) {
+
+	responsePayload := apiResponse{
+		Message:     message,
+		Description: description,
+	}
+
+	w.Header().Set("Content-type", "application/json")
+
+	w.WriteHeader(statusCode)
+
+	json.NewEncoder(w).Encode(responsePayload)
 }

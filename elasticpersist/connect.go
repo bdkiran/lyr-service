@@ -27,13 +27,14 @@ func ConnectToEs() {
 	var err error
 	es, err = elasticsearch.NewClient(cfg)
 	if err != nil {
-		logger.Error.Fatalf("Error creating the client: %s", err)
+		logger.Error.Fatalf("Exiting due to error creating the client connection: %s", err)
 	}
+
 	//Get information about es cluster
 	//when this is removed, i/o timout occurs
 	res, err := es.Info()
 	if err != nil {
-		logger.Error.Fatalf("Error getting response: %s", err)
+		logger.Error.Fatalf("Exiting due to error getting response from Elasticsearch cluster: %s", err)
 	}
 
 	defer res.Body.Close()
@@ -50,8 +51,8 @@ type Lyric struct {
 	LineNumber int    `json:"lineNumber"`
 }
 
-//GetByID gets a a document by id. Not sure if this will be used.
-func GetByID(id string) {
+//getByID gets a a document by id. Not sure if this will be used.
+func getByID(id string) {
 	res, err := es.Get("song_lyrics", id)
 	if err != nil {
 		logger.Warning.Printf("Error getting response: %s", err)
@@ -61,9 +62,4 @@ func GetByID(id string) {
 	log.Println(res)
 
 	io.Copy(ioutil.Discard, res.Body)
-}
-
-//GetLyricsByTerm gets documents matchine a term
-func GetLyricsByTerm(term string) []Lyric {
-	return multiMatchSearchIndexedDocument(term)
 }
