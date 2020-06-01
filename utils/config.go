@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+//loads in environment variables into the application
 func init() {
 	err := godotenv.Load()
 	if err != nil {
