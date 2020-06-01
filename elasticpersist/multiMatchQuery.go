@@ -58,7 +58,7 @@ func createBufferedQuery(keywordToSearch string) (bytes.Buffer, error) {
 						"salt": randomSalt,
 					},
 				},
-				"order": "desc",
+				"order": "asc",
 			},
 		},
 	}

@@ -14,7 +14,7 @@ var logger = utils.NewLogger()
 
 //Health handler function, should add more logic to actually provide a "Health" update
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	sendResponse("The server is alive", "No Errors detected.", http.StatusOK, w)
+	sendResponse("The server is alive", "No Errors detected", http.StatusOK, w)
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +24,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Info.Printf("Searching for: %s", term)
 	data, err := elasticpersist.GetLyricsByTerm(term)
 	if err != nil {
-		sendResponse("An Error occured", "An occured when finding that term", 404, w)
+		sendResponse("Search Term Not Found", "Unable to find  for "+term, http.StatusNotFound, w)
 	}
 
 	response, _ := json.MarshalIndent(data, "", "    ")
@@ -46,7 +46,6 @@ func sendResponse(message string, description string, statusCode int, w http.Res
 	}
 
 	w.Header().Set("Content-type", "application/json")
-
 	w.WriteHeader(statusCode)
 
 	json.NewEncoder(w).Encode(responsePayload)
