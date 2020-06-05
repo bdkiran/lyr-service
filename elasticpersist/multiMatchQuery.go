@@ -16,7 +16,7 @@ func GetLyricsByTerm(term string) ([]Lyric, error) {
 		return nil, err
 	}
 
-	elasticResponse, err := makeRequestToElasticSearch(bufferedQuery, "song_lyrics")
+	elasticResponse, err := makeRequestToElasticSearch(bufferedQuery, "music_lyrics")
 	if err != nil {
 		logger.Warning.Print(err)
 		return nil, err

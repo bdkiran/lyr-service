@@ -44,7 +44,7 @@ type Lyric struct {
 	Artist     string `json:"artist"`
 	Title      string `json:"title"`
 	Lyric      string `json:"lyric"`
-	LineNumber int    `json:"lineNumber"`
+	LineNumber []int  `json:"lineNumber"`
 }
 
 func checkElasticSearchDetails() {
