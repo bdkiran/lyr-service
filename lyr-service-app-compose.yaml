@@ -1,12 +1,12 @@
 version: '2'
 services:
     lyr-service:
-        restart: always
+        restart: always #Comment this out when testing locally.
         build:
             dockerfile: Dockerfile
             context: .
         environment:
             - ES_CONNECTION_STRING=http://localhost:9200
             - VIRTUAL_HOST=localhost
-            - LETSENCRYPT_HOST=westcoastmedia.io
+            - LETSENCRYPT_HOST=localhost #Comment this out when testing locally
         network_mode: bridge
