@@ -1,0 +1,12 @@
+version: '2'
+services:
+    lyr-service:
+        restart: always
+        build:
+            dockerfile: Dockerfile
+            context: .
+        environment:
+            - ES_CONNECTION_STRING=http://localhost:9200
+            - VIRTUAL_HOST=localhost
+            - LETSENCRYPT_HOST=westcoastmedia.io
+        network_mode: bridge
