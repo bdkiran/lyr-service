@@ -13,6 +13,9 @@ go build api
 cd elasticpersist
 go build elasticpersist
 
+cd utils
+go build utils
+
 go install lyr-service
 lyr-service
 ```
