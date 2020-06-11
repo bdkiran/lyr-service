@@ -1,6 +1,7 @@
 package elasticpersist
 
 import (
+	"encoding/json"
 	"io"
 	"io/ioutil"
 	"log"
@@ -60,6 +61,30 @@ func checkElasticSearchDetails() {
 	logger.Info.Print(res)
 
 	io.Copy(ioutil.Discard, res.Body)
+}
+
+//GetHealthOfCluster returns the status of the es cluster
+func GetHealthOfCluster() (string, error) {
+	res, err := es.Cluster.Health()
+	if err != nil {
+		logger.Warning.Printf("Error getting health status of cluster: %s", err)
+		return "", err
+	}
+
+	defer res.Body.Close()
+
+	var r map[string]interface{}
+
+	log.Println(res)
+
+	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+		logger.Warning.Printf("Error parsing the response body: %s", err)
+		return "", err
+	}
+
+	statusColor := r["status"]
+
+	return statusColor.(string), nil
 }
 
 //getByID gets a a document by id. Not sure if this will be used.

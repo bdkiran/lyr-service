@@ -79,6 +79,7 @@ func makeRequestToElasticSearch(buf bytes.Buffer, index string) (map[string]inte
 		es.Search.WithBody(&buf),
 		es.Search.WithTrackTotalHits(true),
 		es.Search.WithPretty(),
+		es.Search.WithSize(15),
 	)
 	if err != nil {
 		logger.Warning.Printf("Error getting response from elasticsearch: %s", err)
@@ -109,13 +110,20 @@ func makeRequestToElasticSearch(buf bytes.Buffer, index string) (map[string]inte
 		return r, err
 	}
 
+	hits := int(r["hits"].(map[string]interface{})["total"].(map[string]interface{})["value"].(float64))
+
 	// Print the response status, number of results, and request duration.
 	logger.Info.Printf(
 		"[%s] %d hits; took: %dms",
 		res.Status(),
-		int(r["hits"].(map[string]interface{})["total"].(map[string]interface{})["value"].(float64)),
+		hits,
 		int(r["took"].(float64)),
 	)
+
+	if hits == 0 {
+		logger.Info.Printf("No hits were found")
+		return nil, errors.New("No hits were found")
+	}
 
 	return r, nil
 }
@@ -139,5 +147,6 @@ func extractLyricsToReturn(r map[string]interface{}) ([]Lyric, error) {
 		}
 		returnData = append(returnData, songLyric)
 	}
+
 	return returnData, nil
 }
