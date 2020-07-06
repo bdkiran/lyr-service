@@ -2,6 +2,8 @@
 
 lyr-service is a go rest api that wraps an elasticsearch database.
 
+This API was designed to serves lyrics to the [NoCap App](https://github.com/bdkiran/nocap-app) frontend.
+
 ## Usage
 
 Clone the repository to a new folder then run the following commands:
