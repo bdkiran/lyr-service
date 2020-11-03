@@ -6,17 +6,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 )
 
-//GetLyricsByTerm gets documents matchine a term
+//GetLyricsByTerm gets documents matching parameter term
 func GetLyricsByTerm(term string) ([]Lyric, error) {
-	bufferedQuery, err := createBufferedQuery(term)
+	bufferedQuery, err := createSearchByTermBufferedQuery(term)
 	if err != nil {
 		logger.Warning.Print(err)
 		return nil, err
 	}
 
-	elasticResponse, err := makeRequestToElasticSearch(bufferedQuery, "music_lyrics")
+	elasticResponse, err := makeRequestToElasticSearch(bufferedQuery, "music_lyrics", 15)
 	if err != nil {
 		logger.Warning.Print(err)
 		return nil, err
@@ -31,7 +32,32 @@ func GetLyricsByTerm(term string) ([]Lyric, error) {
 	return lyrics, nil
 }
 
-func createBufferedQuery(keywordToSearch string) (bytes.Buffer, error) {
+//GetRandomLyrics gets a list of random lyrics based off of a 'random_score'
+func GetRandomLyrics() ([]Lyric, error) {
+	currentHour := int(time.Now().Unix())
+
+	bufferedQuery, err := createRandomBufferedQuery(currentHour)
+	if err != nil {
+		logger.Warning.Print(err)
+		return nil, err
+	}
+
+	elasticResponse, err := makeRequestToElasticSearch(bufferedQuery, "music_lyrics", 10)
+	if err != nil {
+		logger.Warning.Print(err)
+		return nil, err
+	}
+
+	lyrics, err := extractLyricsToReturn(elasticResponse)
+	if err != nil {
+		logger.Warning.Print(err)
+		return nil, err
+	}
+
+	return lyrics, nil
+}
+
+func createSearchByTermBufferedQuery(keywordToSearch string) (bytes.Buffer, error) {
 	//Generate a random salt string
 	randomSalt := createRandomSeedString(10)
 	// Build the request body.
@@ -70,7 +96,28 @@ func createBufferedQuery(keywordToSearch string) (bytes.Buffer, error) {
 	return buf, nil
 }
 
-func makeRequestToElasticSearch(buf bytes.Buffer, index string) (map[string]interface{}, error) {
+func createRandomBufferedQuery(seed int) (bytes.Buffer, error) {
+	var buf bytes.Buffer
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"function_score": map[string]interface{}{
+				"random_score": map[string]interface{}{
+					"seed":  seed,
+					"field": "_seq_no",
+				},
+			},
+		},
+	}
+
+	if err := json.NewEncoder(&buf).Encode(query); err != nil {
+		logger.Warning.Printf("Error encoding query: %s", err)
+		return buf, err
+	}
+
+	return buf, nil
+}
+
+func makeRequestToElasticSearch(buf bytes.Buffer, index string, hitsToReturn int) (map[string]interface{}, error) {
 	var r map[string]interface{}
 	// Perform the search request.
 	res, err := es.Search(
@@ -79,7 +126,7 @@ func makeRequestToElasticSearch(buf bytes.Buffer, index string) (map[string]inte
 		es.Search.WithBody(&buf),
 		es.Search.WithTrackTotalHits(true),
 		es.Search.WithPretty(),
-		es.Search.WithSize(15),
+		es.Search.WithSize(hitsToReturn),
 	)
 	if err != nil {
 		logger.Warning.Printf("Error getting response from elasticsearch: %s", err)

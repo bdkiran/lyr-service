@@ -12,9 +12,12 @@ import (
 //Initilize variable to access project logger
 var logger = utils.NewLogger()
 
-//Health handler function, should add more logic to actually provide a "Health" update
+func testHandler(w http.ResponseWriter, r *http.Request) {
+	logger.Info.Println("Message Recieved")
+}
+
+//Check Elasticsearch health
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	//Check Elasticsearch health
 	esStatusColor, err := elasticpersist.GetHealthOfCluster()
 	if err != nil {
 		sendResponse("Error", "Issue getting response from elasticsearch cluster", http.StatusOK, w)
@@ -54,20 +57,15 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-type apiResponse struct {
-	Message     string `json:"message"`
-	Description string `json:"description"`
-}
-
-func sendResponse(message string, description string, statusCode int, w http.ResponseWriter) {
-
-	responsePayload := apiResponse{
-		Message:     message,
-		Description: description,
+func randomHandler(w http.ResponseWriter, r *http.Request) {
+	logger.Info.Println("Getting random lyrics")
+	data, err := elasticpersist.GetRandomLyrics()
+	if err != nil {
+		sendResponse("Something went wrong fetching random lyrics", "Unable to ger random lyrics", http.StatusNotFound, w)
+		return
 	}
-
+	response, _ := json.MarshalIndent(data, "", "    ")
 	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(statusCode)
-
-	json.NewEncoder(w).Encode(responsePayload)
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
 }

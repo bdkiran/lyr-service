@@ -20,15 +20,15 @@ var es *elasticsearch.Client
 
 //ConnectToEs creats a connection to elasticsearch
 func ConnectToEs() {
-	connectionURL, connectErr := utils.GetEnvVariableString("ES_CONNECTION_STRING")
-	if connectErr != nil {
-		logger.Error.Fatal(connectErr)
-	}
+	//connectionURL, connectErr := utils.GetEnvVariableString("ES_CONNECTION_STRING")
+	// if connectErr != nil {
+	// 	logger.Error.Fatal(connectErr)
+	// }
 
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			connectionURL,
-			//"http://localhost:9200",
+			//connectionURL,
+
 		},
 	}
 	var err error

@@ -12,10 +12,15 @@ func InitilizeRouter() http.Handler {
 	router := mux.NewRouter()
 	router.HandleFunc("/", healthHandler).Methods("GET")
 	router.HandleFunc("/search/{term}", searchHandler).Methods("GET")
+	router.HandleFunc("/random", randomHandler).Methods("GET")
+	router.HandleFunc("/form/newsletter", subscriptionFormHandler).Methods("POST")
+	router.HandleFunc("/form/lyricsub", lyricSubmissionFormHandler).Methods("POST")
 
-	corsObj := handlers.AllowedOrigins([]string{"*"})
-
-	returnCors := handlers.CORS(corsObj)(router)
+	headersOk := handlers.AllowedHeaders([]string{"Accept", "Accept-Language", "X-Requested-With", "Content-Type", "Authorization"})
+	//change this to our website address...
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+	returnCors := handlers.CORS(headersOk, originsOk, methodsOk)(router)
 
 	return returnCors
 }
