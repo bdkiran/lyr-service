@@ -28,7 +28,7 @@ func ConnectToEs() {
 	cfg := elasticsearch.Config{
 		Addresses: []string{
 			//connectionURL,
-
+			"http://192.168.1.40:9200",
 		},
 	}
 	var err error
@@ -45,6 +45,7 @@ type Lyric struct {
 	Artist     string `json:"artist"`
 	Title      string `json:"title"`
 	Lyric      string `json:"lyric"`
+	LyricDocID string `json:"lyricDocID"`
 	LineNumber []int  `json:"lineNumber"`
 }
 
