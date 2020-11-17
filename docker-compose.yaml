@@ -1,0 +1,35 @@
+version: '2'
+services:
+    nginx-proxy:
+        restart: always
+        image: jwilder/nginx-proxy
+        ports:
+          - "80:80"
+          - "443:443"
+        volumes:
+          - "/etc/nginx/vhost.d"
+          - "/usr/share/nginx/html"
+          - "/var/run/docker.sock:/tmp/docker.sock:ro"
+          - "/etc/nginx/certs"
+        network_mode: bridge
+    
+    letsencrypt-nginx-proxy-companion:
+        restart: always
+        image: jrcs/letsencrypt-nginx-proxy-companion
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        volumes_from:
+            - "nginx-proxy"
+        network_mode: bridge
+
+    lyr-service:
+        restart: always #Comment this out when testing locally.
+        image: bdkiran/lyr-service:latest
+        environment:
+            - ES_CONNECTION_STRING=http://10.128.0.2:9200
+            - VIRTUAL_HOST=jamesblakejustice.com
+            - LETSENCRYPT_HOST=jamesblakejustice.com #Comment this out when testing locally
+        network_mode: bridge
+        # build:
+        #     dockerfile: Dockerfile
+        #     context: .

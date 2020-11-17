@@ -2,5 +2,3 @@
 app.log
 #Remove environment variables from upload
 .env
-
-docker-compose.yaml
