@@ -69,3 +69,19 @@ func randomHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(response)
 }
+
+func randomArtistHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	artist, _ := vars["artist"]
+
+	logger.Info.Printf("Getting random lyrics for artist: %s", artist)
+	data, err := elasticpersist.GetRandomLyricsByArtist(artist)
+	if err != nil {
+		sendResponse("Something went wrong fetching random lyrics", "Unable to ger random lyrics", http.StatusNotFound, w)
+		return
+	}
+	response, _ := json.MarshalIndent(data, "", "    ")
+	w.Header().Set("Content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+}

@@ -57,6 +57,31 @@ func GetRandomLyrics() ([]Lyric, error) {
 	return lyrics, nil
 }
 
+//GetRandomLyricsByArtist gets a list of random lyrics based off of a 'random_score'
+func GetRandomLyricsByArtist(artist string) ([]Lyric, error) {
+	currentHour := int(time.Now().Unix())
+
+	bufferedQuery, err := createRandomBufferedQueryByArtist(artist, currentHour)
+	if err != nil {
+		logger.Warning.Print(err)
+		return nil, err
+	}
+
+	elasticResponse, err := makeRequestToElasticSearch(bufferedQuery, "music_lyrics", 10)
+	if err != nil {
+		logger.Warning.Print(err)
+		return nil, err
+	}
+
+	lyrics, err := extractLyricsToReturn(elasticResponse)
+	if err != nil {
+		logger.Warning.Print(err)
+		return nil, err
+	}
+
+	return lyrics, nil
+}
+
 func createSearchByTermBufferedQuery(keywordToSearch string) (bytes.Buffer, error) {
 	//Generate a random salt string
 	randomSalt := createRandomSeedString(10)
@@ -79,7 +104,7 @@ func createSearchByTermBufferedQuery(keywordToSearch string) (bytes.Buffer, erro
 				"type": "number",
 				"script": map[string]interface{}{
 					"lang":   "painless",
-					"source": "(doc['_id'].value + params.salt).hashCode()",
+					"source": "(doc['lyricDocID'].value + params.salt).hashCode()",
 					"params": map[string]interface{}{
 						"salt": randomSalt,
 					},
@@ -101,6 +126,32 @@ func createRandomBufferedQuery(seed int) (bytes.Buffer, error) {
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
 			"function_score": map[string]interface{}{
+				"random_score": map[string]interface{}{
+					"seed":  seed,
+					"field": "_seq_no",
+				},
+			},
+		},
+	}
+
+	if err := json.NewEncoder(&buf).Encode(query); err != nil {
+		logger.Warning.Printf("Error encoding query: %s", err)
+		return buf, err
+	}
+
+	return buf, nil
+}
+
+func createRandomBufferedQueryByArtist(artist string, seed int) (bytes.Buffer, error) {
+	var buf bytes.Buffer
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"function_score": map[string]interface{}{
+				"query": map[string]interface{}{
+					"match": map[string]interface{}{
+						"artist": artist,
+					},
+				},
 				"random_score": map[string]interface{}{
 					"seed":  seed,
 					"field": "_seq_no",

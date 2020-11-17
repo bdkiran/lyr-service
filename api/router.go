@@ -13,6 +13,7 @@ func InitilizeRouter() http.Handler {
 	router.HandleFunc("/", healthHandler).Methods("GET")
 	router.HandleFunc("/search/{term}", searchHandler).Methods("GET")
 	router.HandleFunc("/random", randomHandler).Methods("GET")
+	router.HandleFunc("/random/{artist}", randomArtistHandler).Methods("GET")
 	router.HandleFunc("/form/newsletter", subscriptionFormHandler).Methods("POST")
 	router.HandleFunc("/form/lyricsub", lyricSubmissionFormHandler).Methods("POST")
 
