@@ -24,7 +24,7 @@ services:
 
     lyr-service:
         restart: always #Comment this out when testing locally.
-        image: bdkiran/lyr-service:latest
+        image: bdkiran/lyr-service:1.0
         environment:
             - ES_CONNECTION_STRING=http://10.128.0.2:9200
             - VIRTUAL_HOST=jamesblakejustice.com
