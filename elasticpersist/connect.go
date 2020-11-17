@@ -27,11 +27,7 @@ func ConnectToEs() {
 
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-<<<<<<< HEAD
 			connectionURL,
-=======
-			connectionURL,
->>>>>>> 5fd42e5516559fc3f05eb2609053b88e0bc9283c
 		},
 	}
 	var err error
