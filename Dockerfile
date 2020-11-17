@@ -28,7 +28,7 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 
 # This container exposes port 80 to the outside world
-EXPOSE 8080
+EXPOSE 80
 
 # Run the binary program produced by `go install`
 ENTRYPOINT ["./main"] --port 80
