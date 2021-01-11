@@ -36,16 +36,19 @@ func ConnectToEs() {
 		logger.Error.Fatalf("Exiting due to error creating the client connection: %s", err)
 	}
 
+	//Ping the ES cluster before displaying this message
 	logger.Info.Println("ES connection successful")
 }
 
 //Lyric is the structure that represnts data store in elasticsearch
 type Lyric struct {
-	Artist     string `json:"artist"`
-	Title      string `json:"title"`
-	Lyric      string `json:"lyric"`
-	LyricDocID string `json:"lyricDocID"`
-	LineNumber []int  `json:"lineNumber"`
+	Artist string `json:"artist"`
+	Title  string `json:"title"`
+	Lyric  string `json:"lyric"`
+	//LyricDocID string  `json:"lyricDocID"`
+	//LineNumber []int   `json:"lineNumber"`
+	Upvotes []int64 `json:"upvotes"`
+	DocID   string  `json:"docID"`
 }
 
 func checkElasticSearchDetails() {

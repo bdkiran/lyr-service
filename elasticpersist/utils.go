@@ -38,7 +38,7 @@ func createRandomSeedString(n int) string {
 
 /*Orginal iteration of the functions. Keeping them around temporarily*/
 
-//getLyricsByTerm gets documents matchine a term
+//getLyricsByTerm gets documents matching a term
 func getLyricsByTerm2(term string) []Lyric {
 	return multiMatchSearchIndexedDocument(term)
 }

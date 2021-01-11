@@ -243,6 +243,15 @@ func extractLyricsToReturn(r map[string]interface{}) ([]Lyric, error) {
 			logger.Warning.Println(err)
 			return returnData, err
 		}
+		//Add the document id to the return object
+		documentID := hit.(map[string]interface{})["_id"].(string)
+		songLyric.DocID = documentID
+
+		//Return empty array instead of null to frontend
+		if songLyric.Upvotes == nil {
+			songLyric.Upvotes = []int64{}
+		}
+
 		returnData = append(returnData, songLyric)
 	}
 

@@ -13,7 +13,6 @@ import (
 var logger = utils.NewLogger()
 
 func testHandler(w http.ResponseWriter, r *http.Request) {
-	logger.Info.Println("Message Recieved")
 }
 
 //Check Elasticsearch health

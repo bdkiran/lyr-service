@@ -16,6 +16,9 @@ func InitilizeRouter() http.Handler {
 	router.HandleFunc("/random/{artist}", randomArtistHandler).Methods("GET")
 	router.HandleFunc("/form/newsletter", subscriptionFormHandler).Methods("POST")
 	router.HandleFunc("/form/lyricsub", lyricSubmissionFormHandler).Methods("POST")
+	router.HandleFunc("/upvote", upvoteHandler).Methods("POST")
+
+	router.Use(authMiddleWare)
 
 	headersOk := handlers.AllowedHeaders([]string{"Accept", "Accept-Language", "X-Requested-With", "Content-Type", "Authorization"})
 	//change this to our website address...
@@ -24,4 +27,20 @@ func InitilizeRouter() http.Handler {
 	returnCors := handlers.CORS(headersOk, originsOk, methodsOk)(router)
 
 	return returnCors
+}
+
+func authMiddleWare(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		urlListToCheck := []string{"/upvote"}
+		for _, uri := range urlListToCheck {
+			if r.RequestURI != uri {
+				h.ServeHTTP(w, r)
+				return
+			}
+		}
+		isAuthenticated := validateToken(w, r)
+		if isAuthenticated {
+			h.ServeHTTP(w, r)
+		}
+	})
 }
