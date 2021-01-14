@@ -3,12 +3,16 @@ package api
 import (
 	"net/http"
 
+	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
 //InitilizeRouter returns a new http Handler with all initilized routes, also providing cors access
 func InitilizeRouter() http.Handler {
+	//Get jwt token secret.....
+	tokenInit()
+
 	router := mux.NewRouter()
 	router.HandleFunc("/", healthHandler).Methods("GET")
 	router.HandleFunc("/search/{term}", searchHandler).Methods("GET")
@@ -17,6 +21,7 @@ func InitilizeRouter() http.Handler {
 	router.HandleFunc("/form/newsletter", subscriptionFormHandler).Methods("POST")
 	router.HandleFunc("/form/lyricsub", lyricSubmissionFormHandler).Methods("POST")
 	router.HandleFunc("/upvote", upvoteHandler).Methods("POST")
+	router.HandleFunc("/upvote", undoUpvoteHandler).Methods("PUT")
 
 	router.Use(authMiddleWare)
 
@@ -38,8 +43,9 @@ func authMiddleWare(h http.Handler) http.Handler {
 				return
 			}
 		}
-		isAuthenticated := validateToken(w, r)
+		isAuthenticated, parseUserID := validateToken(w, r)
 		if isAuthenticated {
+			context.Set(r, "token", parseUserID)
 			h.ServeHTTP(w, r)
 		}
 	})

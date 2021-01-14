@@ -20,17 +20,13 @@ RUN CGO_ENABLED=0 GOOS=linux go build -v -o main
 #Second stage build
 FROM alpine:latest
 
-RUN apk add --no-cache ca-certificates
-
 WORKDIR /root/
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/main .
 
 # This container exposes port 80 to the outside world
-EXPOSE 80
+EXPOSE 9000
 
 # Run the binary program produced by `go install`
-ENTRYPOINT ["./main"] --port 80
-
-#docker run -d -p 80:80 go-docker
+ENTRYPOINT ["./main"] --port 9000

@@ -249,7 +249,7 @@ func extractLyricsToReturn(r map[string]interface{}) ([]Lyric, error) {
 
 		//Return empty array instead of null to frontend
 		if songLyric.Upvotes == nil {
-			songLyric.Upvotes = []int64{}
+			songLyric.Upvotes = []int{}
 		}
 
 		returnData = append(returnData, songLyric)

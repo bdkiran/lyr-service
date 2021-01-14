@@ -25,6 +25,8 @@ func ConnectToEs() {
 		logger.Error.Fatal(connectErr)
 	}
 
+	//connectionURL := "http://192.168.1.251:9200"
+
 	cfg := elasticsearch.Config{
 		Addresses: []string{
 			connectionURL,
@@ -47,8 +49,8 @@ type Lyric struct {
 	Lyric  string `json:"lyric"`
 	//LyricDocID string  `json:"lyricDocID"`
 	//LineNumber []int   `json:"lineNumber"`
-	Upvotes []int64 `json:"upvotes"`
-	DocID   string  `json:"docID"`
+	Upvotes []int  `json:"upvotes"`
+	DocID   string `json:"docID"`
 }
 
 func checkElasticSearchDetails() {

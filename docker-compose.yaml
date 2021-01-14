@@ -1,35 +1,28 @@
-version: '2'
+version: '3'
 services:
-    nginx-proxy:
-        restart: always
-        image: jwilder/nginx-proxy
-        ports:
-          - "80:80"
-          - "443:443"
-        volumes:
-          - "/etc/nginx/vhost.d"
-          - "/usr/share/nginx/html"
-          - "/var/run/docker.sock:/tmp/docker.sock:ro"
-          - "/etc/nginx/certs"
-        network_mode: bridge
-    
-    letsencrypt-nginx-proxy-companion:
-        restart: always
-        image: jrcs/letsencrypt-nginx-proxy-companion
-        volumes:
-            - "/var/run/docker.sock:/var/run/docker.sock:ro"
-        volumes_from:
-            - "nginx-proxy"
-        network_mode: bridge
-
     lyr-service:
-        restart: always #Comment this out when testing locally.
-        image: bdkiran/lyr-service:1.0
+        #restart: always #Comment this out when testing locally.
+        image: bdkiran/lyr-service
         environment:
-            - ES_CONNECTION_STRING=http://10.128.0.2:9200
-            - VIRTUAL_HOST=jamesblakejustice.com
-            - LETSENCRYPT_HOST=jamesblakejustice.com #Comment this out when testing locally
+            - ES_CONNECTION_STRING=http://192.168.1.251:9200
+            - TOKEN_SECRET=mySecret
         network_mode: bridge
-        # build:
-        #     dockerfile: Dockerfile
-        #     context: .
+        ports:
+            - 9000:9000
+    user-service:
+        #restart: always #Comment this out when testing locally.
+        image: bdkiran/nocap-user-service
+        environment:
+            #Postgres variables
+            - PGHOST=192.168.1.28
+            - PGUSER=postgres
+            - PGDATABASE=nocap
+            - PGPASSWORD=postgres
+            - PGPORT=5432
+            #google auth variables
+            - CLIENT_ID=462139200149-n6ra1f09mhm7oie6fc29bah3pcc386j7.apps.googleusercontent.com
+            - CLIENT_SECRET=ztWzMtZOXC1OE2qcMC_XHDN_
+            #JWT variables
+            - TOKEN_SECRET=mySecret
+        ports:
+            - 8080:8080

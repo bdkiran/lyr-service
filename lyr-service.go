@@ -15,6 +15,7 @@ var logger = utils.NewLogger()
 
 func main() {
 	logger.Info.Println("Starting the server...")
+	utils.LoadEnvVariables()
 	//Set up connection to elasticearch
 	elasticpersist.ConnectToEs()
 	//Set up Http listener.
@@ -25,7 +26,7 @@ func handleRoutes() {
 	corsHandler := api.InitilizeRouter()
 	srv := &http.Server{
 		Handler:      corsHandler,
-		Addr:         ":8080",
+		Addr:         ":9000",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
