@@ -2,7 +2,7 @@ version: '3'
 services:
     lyr-service:
         #restart: always #Comment this out when testing locally.
-        image: bdkiran/lyr-service
+        image: bdkiran/lyr-service:latest
         environment:
             - ES_CONNECTION_STRING=http://10.128.0.2:9200
             - TOKEN_SECRET=myDawg
@@ -10,7 +10,7 @@ services:
             - 9000:9000
     user-service:
         #restart: always #Comment this out when testing locally.
-        image: bdkiran/nocap-user-service
+        image: bdkiran/nocap-user-service:latest
         environment:
             #Postgres variables
             - PGHOST=10.128.0.2
