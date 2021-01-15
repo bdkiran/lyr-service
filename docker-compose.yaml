@@ -23,5 +23,6 @@ services:
             - CLIENT_SECRET=ztWzMtZOXC1OE2qcMC_XHDN_
             #JWT variables
             - TOKEN_SECRET=myDawg
+            - REDIRECT_URL=https://nocaplyrics.com
         ports:
             - 8080:8080
